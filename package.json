@@ -8,8 +8,9 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc --outDir ./out",
-    "start": "nodemon ./out/app.js",
-    "start:production": "pm2 start ecosystem.config.js --env production",
+    "start:dev": "nodemon ./out/app.js",
+    "start": "pm2 start ecosystem.config.js --env production",
+    "restart": "pm2 restart ecosystem.config.js",
     "stop": "pm2 stop ecosystem.config.js",
     "delete": "pm2 delete ecosystem.config.js"
   },

@@ -1,5 +1,4 @@
 import * as Restify from "restify"
-import * as Redis from "redis"
 import * as Dotenv from "dotenv"
 import { WeahterApiController } from "./controllers/WeahterApiController"
 import { SignatureMiddleware } from "./middleware/SignatureMiddleware";
@@ -10,11 +9,10 @@ const server = Restify.createServer({
   name: 'home-station-api',
   version: '1.0.0'
 })
-const redisClient = Redis.createClient({ host: process.env.REDIS_HOST })
 
 // Helpers
-const signature = new SignatureMiddleware('secret1234')
-const redisHelper = new RedisHelper(redisClient)
+const signature = new SignatureMiddleware(process.env.APP_SECRET)
+const redisHelper = new RedisHelper(process.env.REDIS_HOST)
 
 // Middleware
 server.use(Restify.plugins.acceptParser(server.acceptable))
