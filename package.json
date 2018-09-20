@@ -1,0 +1,26 @@
+{
+  "name": "home-station-api",
+  "version": "1.0.0",
+  "description": "A REST API for the Arduino Home Station project",
+  "main": "index.js",
+  "repository": "https://github.com/n9iels/home-station-api",
+  "author": "Niels van der Veer <n.i.vdveer@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --outDir ./out",
+    "start": "nodemon ./out/app.js",
+    "start:production": "NODE_ENV=production node ./out/app.js"
+  },
+  "dependencies": {
+    "@types/dotenv": "^4.0.3",
+    "dotenv": "^6.0.0",
+    "redis": "^2.8.0",
+    "restify": "^7.2.1"
+  },
+  "devDependencies": {
+    "@types/redis": "^2.8.6",
+    "@types/restify": "^7.2.4",
+    "nodemon": "^1.18.4",
+    "typescript": "^3.0.3"
+  }
+}
