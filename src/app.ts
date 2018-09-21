@@ -18,7 +18,7 @@ const redisHelper = new RedisHelper(process.env.REDIS_HOST)
 server.use(Restify.plugins.acceptParser(server.acceptable))
 server.use(Restify.plugins.queryParser())
 server.use(Restify.plugins.bodyParser())
-server.use((req, res, next) => signature.handleRequest(req, res, next))
+// server.use((req, res, next) => signature.handleRequest(req, res, next))
 
 
 // Registration of routes
