@@ -6,7 +6,7 @@ export class RedisHelper {
     constructor(host: string) {
         this.redisClient = Redis.createClient({ host: host })
         this.redisClient.on('error', (err) => {
-            console.error("Error connection to redis", err.toString())
+            console.log(`${new Date().toISOString()} - Error connection to redis - ${err.toString()}`)
         })
     }
 
