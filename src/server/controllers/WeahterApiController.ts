@@ -1,5 +1,5 @@
 import * as Restify from "restify"
-import { Api } from "../types"
+import { Api } from "../../types"
 import { RedisHelper } from "../helpers/redisHelper";
 
 export class WeahterApiController {

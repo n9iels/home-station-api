@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'HomeStationApi',
-    script: './out/app.js',
+    script: './out/server/app.js',
     instances: "max",
     exec_mode: "cluster",
 

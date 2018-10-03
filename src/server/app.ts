@@ -24,7 +24,7 @@ server.use(Restify.plugins.bodyParser())
 // Registration of routes
 const weahterApi = new WeahterApiController(redisHelper)
 
-server.get('/', Restify.plugins.serveStatic({
+server.get('/*', Restify.plugins.serveStatic({
   directory: './wwwroot',
   default: 'index.html'
 }));
