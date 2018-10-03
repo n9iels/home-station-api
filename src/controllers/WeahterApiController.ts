@@ -26,10 +26,11 @@ export class WeahterApiController {
         
         this.redisHelper.lrange('reading_atmosphere', 0, !amountOfReadings ? 0 : amountOfReadings -1)
             .then(readings => readings.map(timestamp => {
-                return this.redisHelper.mget('temp_' + timestamp, 'hum_' + timestamp).then(values => {
+                return this.redisHelper.mget('temp_' + timestamp, 'hum_' + timestamp, 'heat_' + timestamp).then(values => {
                     return {
                         temperature: Number(values[0]),
                         humidity: Number(values[1]),
+                        heatIndex: Number(values[2]),
                         time: Number(timestamp)
                     }
                 })
@@ -61,11 +62,13 @@ export class WeahterApiController {
         this.redisHelper.lpush('reading_atmosphere', timeStamp)
             .then(_ => this.redisHelper.set('hum_' + timeStamp, postData.humidity.toString()))
             .then(_ => this.redisHelper.set('temp_' + timeStamp, postData.temperature.toString()))
+            .then(_ => this.redisHelper.set('heat_' + timeStamp, postData.heatIndex.toString()))
             .then(_ => this.redisHelper.lrange('reading_atmosphere', 203, -1)
                 .then(readings => {
                     readings.forEach(timestamp => {
                         this.redisHelper.del('temp_' + timestamp)
-                        this.redisHelper.del('hum_' + timestamp)
+                        this.redisHelper.del('hum_' + timestamp),
+                        this.redisHelper.del('heat_' + timestamp)
                     })
                 })
             )
