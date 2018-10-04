@@ -104,6 +104,4 @@ typings/
 ### Project specific files ###
 build/
 out/
-wwwroot/js
-wwwroot/css
 .env
