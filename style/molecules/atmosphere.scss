@@ -1,0 +1,17 @@
+.atmosphere {
+    padding: 0 25px;
+
+    &__temp {
+        font-size: 7em;
+        font-weight: 700;
+
+        span {
+            font-size: 0.7em;
+            vertical-align: super;
+        }
+    }
+
+    &__location {
+        font-size: 2em;
+    }
+}

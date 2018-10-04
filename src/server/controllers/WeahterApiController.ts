@@ -52,7 +52,7 @@ export class WeahterApiController {
     public postAtmosphereData(req: Restify.Request, res: Restify.Response, next: Restify.Next) {
         let postData: Api.AtmosphereData = req.body
 
-        if (!postData || !postData.humidity || !postData.temperature) {
+        if (!postData || !postData.humidity || !postData.temperature || !postData.heatIndex) {
             res.send(400)
             return
         }
@@ -63,7 +63,7 @@ export class WeahterApiController {
             .then(_ => this.redisHelper.set('hum_' + timeStamp, postData.humidity.toString()))
             .then(_ => this.redisHelper.set('temp_' + timeStamp, postData.temperature.toString()))
             .then(_ => this.redisHelper.set('heat_' + timeStamp, postData.heatIndex.toString()))
-            .then(_ => this.redisHelper.lrange('reading_atmosphere', 203, -1)
+            .then(_ => this.redisHelper.lrange('reading_atmosphere', 287, -1)
                 .then(readings => {
                     readings.forEach(timestamp => {
                         this.redisHelper.del('temp_' + timestamp)
@@ -72,7 +72,8 @@ export class WeahterApiController {
                     })
                 })
             )
-            .then(_ => this.redisHelper.ltrim('reading', 0, 203))
+            // Based on 12 readings per hour and storage for one
+            .then(_ => this.redisHelper.ltrim('reading', 0, 287))
             .then(_ => res.send(201))
             .catch(e => res.send(500, e))
     }
@@ -80,7 +81,7 @@ export class WeahterApiController {
     /**
      * GET /api/weather/wind
      * 
-     * Get he most recent weahter data
+     * Get he most recent weahter dawindta
      * 
      * @param req Restify Request object
      * @param res Restify Response object
@@ -91,7 +92,6 @@ export class WeahterApiController {
 
         this.redisHelper.lrange('reading_wind', 0, !amountOfReadings ? 0 : amountOfReadings -1)
             .then(readings => readings.map(timestamp => {
-                console.log(timestamp)
                 return this.redisHelper.mget('wind_rpm_' + timestamp).then(values => {
                     return {
                         rpm: Number(values[0]),
