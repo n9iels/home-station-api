@@ -34,6 +34,6 @@ server.get('/api/weather/wind', (req, res, next) => weahterApi.getWindData(req, 
 server.post('/api/weather/wind', (req, res, next) => weahterApi.postWindspeedData(req, res, next))
 
 // Start server
-server.listen(8080, function () {
+server.listen(process.env.NODE_PORT, function () {
   console.log('%s listening at %s', server.name, server.url);
 });
