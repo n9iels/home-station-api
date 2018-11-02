@@ -7,7 +7,7 @@ export namespace Api {
     }
 
     export interface WindspeedData {
-        rpm: number
+        readings: number[]
     }
 
     export interface WeatherData {
