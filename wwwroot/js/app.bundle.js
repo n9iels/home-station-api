@@ -234,7 +234,7 @@ var App = /** @class */ (function (_super) {
     __extends(App, _super);
     function App(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = { atmosphereData: 'loading', windspeedData: 'loading' };
+        _this.state = { atmosphereData: 'loading', windspeedData: 'loading', date: Moment() };
         return _this;
     }
     App.prototype.componentDidMount = function () {
@@ -243,48 +243,46 @@ var App = /** @class */ (function (_super) {
     };
     App.prototype.getAtmosphereData = function () {
         var _this = this;
-        var today = Moment().format('YYYY-MM-DD');
-        var tomorrow = Moment().add(1, 'days').format('YYYY-MM-DD');
+        var from = Moment(this.state.date).format('YYYY-MM-DD');
+        var to = Moment(this.state.date).add(1, 'days').format('YYYY-MM-DD');
         var headers = new Headers();
         headers.append('content-type', 'application/json');
-        fetch("/api/weather/atmosphere?from=" + today + "&to=" + tomorrow, { method: 'get', credentials: 'include', headers: headers })
+        fetch("/api/weather/atmosphere?from=" + from + "&to=" + to, { method: 'get', credentials: 'include', headers: headers })
             .then(function (res) { return res.json(); })
             .then(function (json) { return json.map(function (j) { return (__assign({}, j, { createdAt: new Date(j.createdAt), updatedAt: new Date(j.updatedAt) })); }); })
             .then(function (json) { return _this.setState({ atmosphereData: json }); });
     };
     App.prototype.getWindspeedData = function () {
         var _this = this;
-        var today = Moment().format('YYYY-MM-DD');
-        var tomorrow = Moment().add(1, 'days').format('YYYY-MM-DD');
+        var from = Moment(this.state.date).format('YYYY-MM-DD');
+        var to = Moment(this.state.date).add(1, 'days').format('YYYY-MM-DD');
         var headers = new Headers();
         headers.append('content-type', 'application/json');
-        fetch("/api/weather/wind?from=" + today + "&to=" + tomorrow, { method: 'get', credentials: 'include', headers: headers })
+        fetch("/api/weather/wind?from=" + from + "&to=" + to, { method: 'get', credentials: 'include', headers: headers })
             .then(function (res) { return res.json(); })
             .then(function (json) { return _this.setState({ windspeedData: json }); });
     };
+    App.prototype.changeDate = function (days) {
+        var _this = this;
+        this.setState(function (prevState) { return ({ date: prevState.date.add(days, 'days') }); }, function () {
+            _this.getAtmosphereData();
+            _this.getWindspeedData();
+        });
+    };
     App.prototype.render = function () {
-        return this.state.atmosphereData == 'loading' || this.state.windspeedData == 'loading' ? null : React.createElement(React.Fragment, null,
-            React.createElement("div", { className: "app__left" },
-                React.createElement("div", { className: "atmosphere" },
-                    React.createElement("div", { className: "atmosphere__temp" },
-                        this.state.atmosphereData[0].temperature,
-                        React.createElement("span", null, "\u00B0")),
-                    React.createElement("div", { className: "atmosphere__location" }, "Gouda"))),
-            React.createElement("div", { className: "app__right" },
-                React.createElement("div", { className: "app__right__content" },
-                    React.createElement(temperatureChart_1.TemperatureChart, { data: this.state.atmosphereData })),
-                React.createElement("div", { className: "app__right__bottom" },
-                    React.createElement("ul", null,
-                        React.createElement("li", null,
-                            React.createElement("span", { className: "icon-droplet" }),
-                            " ",
-                            this.state.atmosphereData[0].humidity,
-                            "%"),
-                        React.createElement("li", null,
-                            React.createElement("span", { className: "icon-leaf" }),
-                            " ",
-                            this.state.windspeedData[0].average_speed,
-                            " km/h")))));
+        var _this = this;
+        return React.createElement("div", { className: "container" },
+            React.createElement("div", { className: "row" },
+                React.createElement("main", { role: "main", className: "col-md-12" },
+                    React.createElement("div", { className: "d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" },
+                        React.createElement("h1", { className: "h2" },
+                            "Dashboard - ",
+                            React.createElement("span", { className: "text-secondary h3" }, this.state.date.format("LL"))),
+                        React.createElement("div", { className: "btn-toolbar mb-2 mb-md-0" },
+                            React.createElement("div", { className: "btn-group mr-2" },
+                                React.createElement("button", { className: "btn btn-sm btn-outline-secondary", onClick: function (_) { return _this.changeDate(-1); } }, "Previous day"),
+                                React.createElement("button", { className: "btn btn-sm btn-outline-secondary", onClick: function (_) { return _this.changeDate(1); } }, "Next day")))),
+                    this.state.atmosphereData != 'loading' && this.state.windspeedData != 'loading' && (React.createElement(temperatureChart_1.TemperatureChart, { key: this.state.date.toString(), atmosData: this.state.atmosphereData })))));
     };
     return App;
 }(React.Component));
@@ -326,25 +324,33 @@ var TemperatureChart = /** @class */ (function (_super) {
         return _this;
     }
     TemperatureChart.prototype.chartData = function () {
-        var labels = this.props.data.map(function (v) { var date = new Date(v.createdAt); return date.getUTCHours() + ":" + date.getUTCMinutes(); });
-        var chartData = this.props.data.map(function (d) { return d.temperature; });
+        var labels = this.props.atmosData.map(function (v) { var date = new Date(v.createdAt); return date.getUTCHours() + ":" + date.getUTCMinutes(); });
+        var tempData = this.props.atmosData.map(function (d) { return d.temperature; });
+        var heatData = this.props.atmosData.map(function (d) { return d.heatIndex; });
         return {
             labels: labels,
             offset: true,
             datasets: [{
                     label: 'Temperatuur',
-                    backgroundColor: [
-                        'rgba(112, 162, 220, 0.5)'
-                    ],
-                    borderColor: [
-                        'rgba(86, 129, 179 ,1)'
-                    ],
+                    backgroundColor: 'rgb(86, 129, 179)',
+                    borderColor: 'rgb(86, 129, 179)',
                     fill: false,
-                    lineTension: 0.1,
+                    lineTension: 0.2,
                     pointHoverBorderWidth: 2,
-                    pointRadius: 1,
+                    pointRadius: 4,
                     pointHitRadius: 10,
-                    data: chartData,
+                    data: tempData,
+                },
+                {
+                    label: 'Gevoelstemperatur',
+                    backgroundColor: 'rgb(255, 98, 132)',
+                    borderColor: 'rgb(255, 98, 132)',
+                    fill: false,
+                    lineTension: 0.2,
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHitRadius: 10,
+                    data: heatData,
                 }]
         };
     };

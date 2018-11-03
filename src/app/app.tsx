@@ -9,12 +9,13 @@ type AppProps = {}
 type AppState = {
     atmosphereData: Array<Api.AtmosphereData> | 'loading'
     windspeedData: Array<Api.WindspeedData> | 'loading'
+    date: Moment.Moment
 }
 
 class App extends React.Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props)
-        this.state = { atmosphereData: 'loading', windspeedData: 'loading' }
+        this.state = { atmosphereData: 'loading', windspeedData: 'loading', date: Moment() }
     }
 
     componentDidMount() {
@@ -23,13 +24,13 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     getAtmosphereData() {
-        let today = Moment().format('YYYY-MM-DD');
-        let tomorrow = Moment().add(1, 'days').format('YYYY-MM-DD');
-        
+        let from = Moment(this.state.date).format('YYYY-MM-DD')
+        let to = Moment(this.state.date).add(1, 'days').format('YYYY-MM-DD')
+
         let headers = new Headers()
         headers.append('content-type', 'application/json')
 
-        fetch(`/api/weather/atmosphere?from=${today}&to=${tomorrow}`, { method: 'get', credentials: 'include', headers: headers })
+        fetch(`/api/weather/atmosphere?from=${from}&to=${to}`, { method: 'get', credentials: 'include', headers: headers })
             .then(res => res.json() as Promise<Array<Api.AtmosphereData>>)
             .then(json => json.map(j => ({ ...j, createdAt: new Date(j.createdAt), updatedAt: new Date(j.updatedAt) })))
             .then(json => this.setState({ atmosphereData: json }))
@@ -37,41 +38,50 @@ class App extends React.Component<AppProps, AppState> {
 
 
     getWindspeedData() {
-        let today = Moment().format('YYYY-MM-DD');
-        let tomorrow = Moment().add(1, 'days').format('YYYY-MM-DD');
+        let from = Moment(this.state.date).format('YYYY-MM-DD')
+        let to = Moment(this.state.date).add(1, 'days').format('YYYY-MM-DD')
 
         let headers = new Headers()
         headers.append('content-type', 'application/json')
 
-        fetch(`/api/weather/wind?from=${today}&to=${tomorrow}`, { method: 'get', credentials: 'include', headers: headers })
+        fetch(`/api/weather/wind?from=${from}&to=${to}`, { method: 'get', credentials: 'include', headers: headers })
             .then(res => res.json() as Promise<Array<Api.WindspeedData>>)
             .then(json => this.setState({ windspeedData: json }))
     }
 
+    changeDate(days: number) {
+        this.setState(prevState => ({ date: prevState.date.add(days, 'days') }), () => {
+            this.getAtmosphereData()
+            this.getWindspeedData()
+        })
+    }
+
     render() {
-        return this.state.atmosphereData == 'loading' || this.state.windspeedData == 'loading' ? null : <>
-            <div className="app__left">
-                <div className="atmosphere">
-                    <div className="atmosphere__temp">
-                        {this.state.atmosphereData[0].temperature}<span>&deg;</span>
+        return <div className="container">
+            <div className="row">
+                <main role="main" className="col-md-12">
+                    <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 className="h2">Dashboard - <span className="text-secondary h3">{this.state.date.format("LL")}</span></h1>
+                        <div className="btn-toolbar mb-2 mb-md-0">
+                            <div className="btn-group mr-2">
+                                <button className="btn btn-sm btn-outline-secondary" onClick={_ => this.changeDate(-1)}>
+                                    Previous day
+                                </button>
+                                <button className="btn btn-sm btn-outline-secondary" onClick={_ => this.changeDate(1)}>
+                                    Next day
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div className="atmosphere__location">
-                        Gouda
-                    </div>
-                </div>
+                    {this.state.atmosphereData != 'loading' && this.state.windspeedData != 'loading' && (
+                        <TemperatureChart
+                            key={this.state.date.toString()}
+                            atmosData={this.state.atmosphereData}
+                        />
+                    )}
+                </main>
             </div>
-            <div className="app__right">
-                <div className="app__right__content">
-                    <TemperatureChart data={this.state.atmosphereData} />
-                </div>
-                <div className="app__right__bottom">
-                    <ul>
-                        <li><span className="icon-droplet"></span> {this.state.atmosphereData[0].humidity}%</li>
-                        <li><span className="icon-leaf"></span> {this.state.windspeedData[0].average_speed} km/h</li>
-                    </ul>
-                </div>
-            </div>
-        </>
+        </div>
     }
 }
 
