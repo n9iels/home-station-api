@@ -1,13 +1,28 @@
 export namespace Api {
-    export interface AtmosphereData {
+    export interface AtmosphereAddData {
         temperature: number
         humidity: number
         heatIndex: number
-        time: Date
     }
 
-    export interface WindspeedData {
+    export interface AtmosphereData {
+        id: number
+        temperature: number
+        humidity: number
+        heatIndex: number
+        createdAt: Date
+        updatedAt: Date
+    }
+
+    export interface WindspeedAddData {
         readings: number[]
+    }
+
+
+    export interface WindspeedData {
+        average_speed: number[]
+        createAt: Date
+        updatedAt: Date
     }
 
     export interface WeatherData {

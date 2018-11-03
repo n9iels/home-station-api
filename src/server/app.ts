@@ -1,28 +1,33 @@
 import * as Restify from "restify"
+import * as Sequelize from "sequelize"
 import * as Dotenv from "dotenv"
 import { WeahterApiController } from "./controllers/WeahterApiController"
-import { SignatureMiddleware } from "./middleware/SignatureMiddleware";
-import { RedisHelper } from "./helpers/redisHelper";
 
+// Import .env config
 Dotenv.config()
-const server = Restify.createServer({
-  name: 'home-station-api',
-  version: '1.0.0'
-})
 
-// Helpers
-const signature = new SignatureMiddleware(process.env.APP_SECRET)
-const redisHelper = new RedisHelper(process.env.REDIS_HOST)
+// Create instances
+const server = Restify.createServer({ name: 'home-station-api', version: '1.0.0' })
+const sequelize = new Sequelize(process.env.MYSQL_DB, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, {
+    host: process.env.MYSQL_HOST,
+    dialect: 'mysql',
+    operatorsAliases: false,
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    }
+});
+
 
 // Middleware
 server.use(Restify.plugins.acceptParser(server.acceptable))
 server.use(Restify.plugins.queryParser())
 server.use(Restify.plugins.bodyParser())
-// server.use((req, res, next) => signature.handleRequest(req, res, next))
-
 
 // Registration of routes
-const weahterApi = new WeahterApiController(redisHelper)
+const weahterApi = new WeahterApiController(sequelize)
 
 server.get('/*', Restify.plugins.serveStatic({
   directory: './wwwroot',

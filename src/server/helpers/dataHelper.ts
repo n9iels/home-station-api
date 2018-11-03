@@ -1,4 +1,9 @@
 export class DataHelper {
+    /**
+     * Remove the outliers of a given array of numbers
+     * 
+     * @param data Data to analyse
+     */
     removeOutliers(data: Array<number>) {
         let q1: number = this.calculateQ(data, 'Q1')
         let q3: number = this.calculateQ(data, 'Q3')
@@ -7,6 +12,12 @@ export class DataHelper {
         return data.filter(v => v < q3 + (1.5 * iqr) && v > q1 - (1.5 * iqr))
     }
 
+    /**
+     * Calculate a boxplot quartile
+     * 
+     * @param data Data to analyse
+     * @param q Quartile to calculate, can be Q1 or Q3
+     */
     private calculateQ(data: Array<number>, q: 'Q1' | 'Q3') {
         data.sort(function (a, b) {
             return a - b

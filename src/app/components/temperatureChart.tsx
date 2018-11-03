@@ -3,7 +3,9 @@
 import * as React from "react"
 import { Api } from "../../types";
 
-type ChartProps = {}
+type ChartProps = {
+    data: Array<Api.AtmosphereData>
+}
 type ChartState = {}
 
 export class TemperatureChart extends React.Component<ChartProps, ChartState> {
@@ -15,18 +17,12 @@ export class TemperatureChart extends React.Component<ChartProps, ChartState> {
     }
 
     componentDidMount() {
-        let headers = new Headers()
-        headers.append('content-type', 'application/json')
-
-        fetch(`/api/weather/atmosphere?amount=-1`, { method: 'get', credentials: 'include', headers: headers })
-            .then(res => res.json() as Promise<Array<Api.AtmosphereData>>)
-            .then(json => json.map(j => ({ ...j, time: new Date(j.time) })))
-            .then(json => this.drawChart(json))
+        this.drawChart(this.props.data)
     }
 
     drawChart(data: Array<Api.AtmosphereData>) {
         let ctx = this.element.getContext('2d')
-        let labels = data.map(v => {let date = new Date(v.time); return date.getUTCHours() + ":" + date.getUTCMinutes()})
+        let labels = data.map(v => { let date = new Date(v.createdAt); return date.getUTCHours() + ":" + date.getUTCMinutes() })
         let chartData = data.map(d => d.temperature)
 
         var myChart = new Chart(ctx, {

@@ -106,3 +106,4 @@ build/
 out/
 .env
 home-station-api
+config/
