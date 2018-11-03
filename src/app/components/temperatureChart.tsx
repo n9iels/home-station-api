@@ -1,7 +1,6 @@
-
-/// <reference path="../../types/chart.d.ts" />
 import * as React from "react"
-import { Api } from "../../types";
+import { Line } from 'react-chartjs-2'
+import { Api } from "../../types"
 
 type ChartProps = {
     data: Array<Api.AtmosphereData>
@@ -9,56 +8,41 @@ type ChartProps = {
 type ChartState = {}
 
 export class TemperatureChart extends React.Component<ChartProps, ChartState> {
-    private element: HTMLCanvasElement
 
     constructor(props: ChartProps) {
         super(props)
         this.state = {}
     }
 
-    componentDidMount() {
-        this.drawChart(this.props.data)
-    }
+    chartData() {
+        let labels = this.props.data.map(v => { let date = new Date(v.createdAt); return date.getUTCHours() + ":" + date.getUTCMinutes() })
+        let chartData = this.props.data.map(d => d.temperature)
 
-    drawChart(data: Array<Api.AtmosphereData>) {
-        let ctx = this.element.getContext('2d')
-        let labels = data.map(v => { let date = new Date(v.createdAt); return date.getUTCHours() + ":" + date.getUTCMinutes() })
-        let chartData = data.map(d => d.temperature)
-
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Temperatuur',
-                    data: chartData,
-                    backgroundColor: [
-                        'rgba(112, 162, 220, 0.5)'
-                    ],
-                    borderColor: [
-                        'rgba(86, 129, 179 ,1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                spanGaps: true,
-                responsive: false,
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        })
+        return {
+            labels: labels,
+            offset: true,
+            datasets: [{
+                label: 'Temperatuur',
+                backgroundColor: [
+                    'rgba(112, 162, 220, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(86, 129, 179 ,1)'
+                ],
+                fill: false,
+                lineTension: 0.1,
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: chartData,
+            }]
+        }
     }
 
     render() {
         return (
             <div className="chart-container">
-                <canvas ref={el => this.element = el} height="650" width="1450" />
+                <Line data={() => this.chartData()} />
             </div>
         )
     }

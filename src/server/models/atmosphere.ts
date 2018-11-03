@@ -39,7 +39,8 @@ export class Atmosphere {
                     [this.sequelize.Op.gte]: from,
                     [this.sequelize.Op.lte]: to,
                 }
-            }
+            },
+            order: [['createdAt', 'DESC']]
         })
     }
 }
