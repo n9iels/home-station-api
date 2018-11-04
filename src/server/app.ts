@@ -22,6 +22,7 @@ const sequelize = new Sequelize(process.env.MYSQL_DB, process.env.MYSQL_USER, pr
 
 
 // Middleware
+server.use(Restify.plugins.gzipResponse())
 server.use(Restify.plugins.acceptParser(server.acceptable))
 server.use(Restify.plugins.queryParser())
 server.use(Restify.plugins.bodyParser())

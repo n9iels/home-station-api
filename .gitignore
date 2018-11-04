@@ -107,3 +107,4 @@ out/
 .env
 home-station-api
 config/
+wwwroot/js
