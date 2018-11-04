@@ -40,7 +40,7 @@ export class Atmosphere {
                     [this.sequelize.Op.lte]: to,
                 }
             },
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt']]
         })
     }
 }

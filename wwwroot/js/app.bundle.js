@@ -280,9 +280,18 @@ var App = /** @class */ (function (_super) {
                             React.createElement("span", { className: "text-secondary h3" }, this.state.date.format("LL"))),
                         React.createElement("div", { className: "btn-toolbar mb-2 mb-md-0" },
                             React.createElement("div", { className: "btn-group mr-2" },
-                                React.createElement("button", { className: "btn btn-sm btn-outline-secondary", onClick: function (_) { return _this.changeDate(-1); } }, "Previous day"),
-                                React.createElement("button", { className: "btn btn-sm btn-outline-secondary", onClick: function (_) { return _this.changeDate(1); } }, "Next day")))),
-                    this.state.atmosphereData != 'loading' && this.state.windspeedData != 'loading' && (React.createElement(temperatureChart_1.TemperatureChart, { key: this.state.date.toString(), atmosData: this.state.atmosphereData })))));
+                                React.createElement("button", { className: "btn btn-sm btn-outline-secondary", onClick: function (_) { return _this.changeDate(-1); } }, "Vorige dag"),
+                                React.createElement("button", { className: "btn btn-sm btn-outline-secondary", onClick: function (_) { return _this.changeDate(1); } }, "Volgende dag")))),
+                    this.state.atmosphereData != 'loading' && this.state.windspeedData != 'loading' && React.createElement(React.Fragment, null,
+                        React.createElement("div", { className: "row mb-3" },
+                            React.createElement("div", { className: "col-md-6 text-center border-right" },
+                                React.createElement("span", { className: "icon-leaf h4 mr-3" }),
+                                React.createElement("span", { className: "h3" }, this.state.windspeedData.length > 0 ? this.state.windspeedData[0].average_speed + " Bft" : "-")),
+                            React.createElement("div", { className: "col-md-6 text-center" },
+                                React.createElement("span", { className: "icon-droplet h4 mr-3" }),
+                                React.createElement("span", { className: "h3" }, this.state.atmosphereData.length > 0 ? this.state.atmosphereData[0].humidity + "%" : "-"))),
+                        React.createElement("div", { className: "chart-container pt-3 border-top" },
+                            React.createElement(temperatureChart_1.TemperatureChart, { key: this.state.date.toString(), atmosData: this.state.atmosphereData }))))));
     };
     return App;
 }(React.Component));
@@ -315,6 +324,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var Moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 var react_chartjs_2_1 = __webpack_require__(/*! react-chartjs-2 */ "./node_modules/react-chartjs-2/es/index.js");
 var TemperatureChart = /** @class */ (function (_super) {
     __extends(TemperatureChart, _super);
@@ -324,7 +334,7 @@ var TemperatureChart = /** @class */ (function (_super) {
         return _this;
     }
     TemperatureChart.prototype.chartData = function () {
-        var labels = this.props.atmosData.map(function (v) { var date = new Date(v.createdAt); return date.getUTCHours() + ":" + date.getUTCMinutes(); });
+        var labels = this.props.atmosData.map(function (v) { return Moment(v.createdAt).lang('nl').format('H:mm'); });
         var tempData = this.props.atmosData.map(function (d) { return d.temperature; });
         var heatData = this.props.atmosData.map(function (d) { return d.heatIndex; });
         return {
@@ -356,8 +366,7 @@ var TemperatureChart = /** @class */ (function (_super) {
     };
     TemperatureChart.prototype.render = function () {
         var _this = this;
-        return (React.createElement("div", { className: "chart-container" },
-            React.createElement(react_chartjs_2_1.Line, { data: function () { return _this.chartData(); } })));
+        return React.createElement(react_chartjs_2_1.Line, { data: function () { return _this.chartData(); } });
     };
     return TemperatureChart;
 }(React.Component));

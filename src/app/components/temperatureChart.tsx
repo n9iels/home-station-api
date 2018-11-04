@@ -1,4 +1,5 @@
 import * as React from "react"
+import * as Moment from "moment"
 import { Line } from 'react-chartjs-2'
 import { Api } from "../../types"
 
@@ -16,7 +17,7 @@ export class TemperatureChart extends React.Component<ChartProps, ChartState> {
     }
 
     chartData() {
-        let labels = this.props.atmosData.map(v => { let date = new Date(v.createdAt); return date.getUTCHours() + ":" + date.getUTCMinutes() })
+        let labels = this.props.atmosData.map(v => Moment(v.createdAt).lang('nl').format('H:mm'))
         let tempData = this.props.atmosData.map(d => d.temperature)
         let heatData = this.props.atmosData.map(d => d.heatIndex)
 
@@ -49,10 +50,6 @@ export class TemperatureChart extends React.Component<ChartProps, ChartState> {
     }
 
     render() {
-        return (
-            <div className="chart-container">
-                <Line data={() => this.chartData()} />
-            </div>
-        )
+        return <Line data={() => this.chartData()} />
     }
 }

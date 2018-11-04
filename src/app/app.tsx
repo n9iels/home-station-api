@@ -65,20 +65,36 @@ class App extends React.Component<AppProps, AppState> {
                         <div className="btn-toolbar mb-2 mb-md-0">
                             <div className="btn-group mr-2">
                                 <button className="btn btn-sm btn-outline-secondary" onClick={_ => this.changeDate(-1)}>
-                                    Previous day
+                                    Vorige dag
                                 </button>
                                 <button className="btn btn-sm btn-outline-secondary" onClick={_ => this.changeDate(1)}>
-                                    Next day
+                                    Volgende dag
                                 </button>
                             </div>
                         </div>
                     </div>
-                    {this.state.atmosphereData != 'loading' && this.state.windspeedData != 'loading' && (
-                        <TemperatureChart
-                            key={this.state.date.toString()}
-                            atmosData={this.state.atmosphereData}
-                        />
-                    )}
+                    {this.state.atmosphereData != 'loading' && this.state.windspeedData != 'loading' && <>
+                        <div className="row mb-3">
+                            <div className="col-md-6 text-center border-right">
+                                <span className="icon-leaf h4 mr-3"></span>
+                                <span className="h3">
+                                    {this.state.windspeedData.length > 0 ? `${this.state.windspeedData[0].average_speed} Bft` : "-"}
+                                </span>
+                            </div>
+                            <div className="col-md-6 text-center">
+                                <span className="icon-droplet h4 mr-3"></span>
+                                <span className="h3">
+                                    {this.state.atmosphereData.length > 0 ? `${this.state.atmosphereData[0].humidity}%` : "-"}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="chart-container pt-3 border-top">
+                            <TemperatureChart
+                                key={this.state.date.toString()}
+                                atmosData={this.state.atmosphereData}
+                            />
+                        </div>
+                    </>}
                 </main>
             </div>
         </div>

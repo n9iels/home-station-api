@@ -36,7 +36,7 @@ export class Windspeed {
                     [this.sequelize.Op.lte]: to,
                 }
             },
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt']]
         })
     }
 }
