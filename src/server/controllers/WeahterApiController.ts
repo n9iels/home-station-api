@@ -107,7 +107,6 @@ export class WeahterApiController {
         }
 
         let postProcessed = postData.readings.filter(v => v != 0);
-        console.log("boe" + postProcessed)
         let differences = new DataHelper().removeOutliers(postProcessed).reduce((res, curr, i) => {
             i < 1 ? res.push(curr) : res.push(curr - postProcessed[i - 1]);
             return res;
