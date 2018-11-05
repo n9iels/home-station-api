@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       average_speed: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       createdAt: {
         allowNull: false,

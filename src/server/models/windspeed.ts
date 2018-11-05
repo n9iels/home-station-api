@@ -16,7 +16,7 @@ export class Windspeed {
         this.sequelize = sequelize
         this.instance = sequelize.define<Api.WindspeedData, WindspeedAttributes>('Windspeed', {
             id: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.FLOAT,
                 autoIncrement: true,
                 primaryKey: true
             },
@@ -36,7 +36,7 @@ export class Windspeed {
                     [this.sequelize.Op.lte]: to,
                 }
             },
-            order: [['createdAt']]
+            order: [['createdAt', 'DESC']]
         })
     }
 }

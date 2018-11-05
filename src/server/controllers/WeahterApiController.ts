@@ -114,7 +114,7 @@ export class WeahterApiController {
         let average = differences.reduce((sum, curr) => sum + curr, 0) / differences.length
 
         new Windspeed(this.sequelize)
-            .create({ average_speed: average })
+            .create({ average_speed: average == NaN ? 0 : average })
             .then(v => res.send(201, v))
             .catch(e => next(e))
     }
