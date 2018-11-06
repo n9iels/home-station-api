@@ -84,7 +84,7 @@ class App extends React.Component<AppProps, AppState> {
                             <div className="col-md-6 text-center">
                                 <span className="icon-droplet h4 mr-3"></span>
                                 <span className="h3">
-                                    {this.state.atmosphereData.length > 0 ? `${this.state.atmosphereData[0].humidity}%` : "-"}
+                                    {this.state.atmosphereData.length > 0 ? `${this.state.atmosphereData[this.state.atmosphereData.length - 1].humidity}%` : "-"}
                                 </span>
                             </div>
                         </div>
