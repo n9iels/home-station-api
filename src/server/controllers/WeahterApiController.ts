@@ -59,7 +59,7 @@ export class WeahterApiController {
 
         new Atmosphere(this.sequelize)
             .create({ ...postData })
-            .then(v => res.send(v))
+            .then(v => res.send(201, v))
             .catch(e => next(e))
     }
 
