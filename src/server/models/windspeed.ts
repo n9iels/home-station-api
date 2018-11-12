@@ -28,6 +28,12 @@ export class Windspeed {
         return this.instance.create(values)
     }
 
+    getLatest() {
+        return this.instance.findOne({
+            order: [['createdAt', 'DESC']]
+        })
+    }
+
     getBetween(from: Date, to:Date) {
         return this.instance.findAll({
             where: {

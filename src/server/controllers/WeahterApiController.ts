@@ -1,5 +1,6 @@
 import * as Restify from "restify"
 import * as Sequelize from "sequelize"
+import Axios from "axios"
 import { Api } from "../../types"
 import { DataHelper } from "../helpers/dataHelper"
 import { Atmosphere } from "../models/atmosphere";
@@ -57,10 +58,23 @@ export class WeahterApiController {
             return
         }
 
-        new Atmosphere(this.sequelize)
-            .create({ ...postData })
-            .then(v => res.send(201, v))
-            .catch(e => next(e))
+        // Get the latest wind data to send it to the central server
+        new Windspeed(this.sequelize).getLatest()
+            .then(windspeed => new Atmosphere(this.sequelize)
+                .create({ ...postData })
+                .then(postData => {
+                    Axios.post("http://hro-sma.nl/api/weatherupdates", {
+                        deviceId: process.env.DEVICE_ID_ATMOS,
+                        temperatureC: postData.temperature,
+                        humidity: postData.humidity,
+                        windspeed: windspeed.average_speed
+                    }, { headers: { "X-Device-Id": process.env.DEVICE_ID_ATMOS } })
+
+                    return postData;
+                })
+                .then(v => res.send(201, v))
+                .catch(e => next(e))
+            )
     }
 
     /**
@@ -113,9 +127,22 @@ export class WeahterApiController {
         }, [])
 
         let average = differences.reduce((sum, curr) => sum + curr, 0) / differences.length
+        let bft: number;
+
+        if (isNaN(average)) {
+            bft = 0;
+        } else if (average <= 170) {
+            bft = 24;
+        } else if (average > 170 && average <= 190 ) {
+            bft = 17;
+        } else if (average > 190 && average <= 300) {
+            bft = 8;
+        } else {
+            bft = 3;
+        }
 
         new Windspeed(this.sequelize)
-            .create({ average_speed: isNaN(average) ? 0 : average })
+            .create({ average_speed: bft })
             .then(v => res.send(201, v))
             .catch(e => next(e))
     }
