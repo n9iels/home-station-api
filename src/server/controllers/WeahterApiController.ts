@@ -132,13 +132,13 @@ export class WeahterApiController {
         if (isNaN(average)) {
             bft = 0;
         } else if (average <= 170) {
-            bft = 4;
+            bft = 24;
         } else if (average > 170 && average <= 190 ) {
-            bft = 3;
+            bft = 17;
         } else if (average > 190 && average <= 300) {
-            bft = 2;
+            bft = 8;
         } else {
-            bft = 1;
+            bft = 3;
         }
 
         new Windspeed(this.sequelize)
