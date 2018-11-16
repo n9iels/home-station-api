@@ -32,7 +32,7 @@ export class Atmosphere {
         return this.instance.create(values)
     }
 
-    getBetween(from: Date, to:Date) {
+    getBetween(from: Date, to: Date, limit: number = 0) {
         return this.instance.findAll({
             where: {
                 createdAt: {
@@ -40,7 +40,8 @@ export class Atmosphere {
                     [this.sequelize.Op.lte]: to,
                 }
             },
-            order: [['createdAt']]
+            order: [['createdAt']],
+            limit: limit
         })
     }
 }
