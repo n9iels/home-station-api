@@ -41,7 +41,7 @@ export class Atmosphere {
                 }
             },
             order: [['createdAt']],
-            limit: limit
+            limit: Number(limit)
         })
     }
 }

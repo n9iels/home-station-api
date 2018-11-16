@@ -37,7 +37,7 @@ export class WeahterApiController {
         }
 
         new Atmosphere(this.sequelize)
-            .getBetween(from, to, !amount ? 0 : amount)
+            .getBetween(from, to, !amount ? 300 : amount)
             .then(v => res.send(v))
             .catch(e => res.send(e))
     }
