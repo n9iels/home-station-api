@@ -17,9 +17,10 @@ export class TemperatureChart extends React.Component<ChartProps, ChartState> {
     }
 
     chartData() {
-        let labels = this.props.atmosData.map(v => Moment(v.createdAt).lang('nl').format('H:mm'))
+        let labels = this.props.atmosData.map(v => Moment(v.createdAt).locale('nl').format('H:mm'))
         let tempData = this.props.atmosData.map(d => d.temperature)
-        let heatData = this.props.atmosData.map(d => d.heatIndex)
+        let heatData = this.props.atmosData.map(d => d.heatindex)
+        console.log(heatData)
 
         return {
             labels: labels,

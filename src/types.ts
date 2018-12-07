@@ -9,7 +9,7 @@ export namespace Api {
         id: number
         temperature: number
         humidity: number
-        heatIndex: number
+        heatindex: number
         createdAt: Date
         updatedAt: Date
     }
