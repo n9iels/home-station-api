@@ -82,23 +82,10 @@ export class WeahterApiController {
             return
         }
 
-        // Get the latest wind data to send it to the central server
-        new Windspeed(this.sequelize).getLatest()
-            .then(windspeed => new Atmosphere(this.sequelize)
-                .create({ ...postData })
-                .then(postData => {
-                    Axios.post("http://hro-sma.nl/api/weatherupdates", {
-                        deviceId: process.env.DEVICE_ID_ATMOS,
-                        temperatureC: postData.temperature,
-                        humidity: postData.humidity,
-                        windspeed: windspeed.average_speed
-                    }, { headers: { "X-Device-Id": process.env.DEVICE_ID_ATMOS } })
-
-                    return postData;
-                })
-                .then(v => res.send(201, v))
-                .catch(e => next(e))
-            )
+        new Atmosphere(this.sequelize)
+            .create({ heatIndex: postData.heatIndex, temperature: postData.temperature, humidity: postData.heatIndex })
+            .then(v => res.send(201, v))
+            .catch(e => next(e))
     }
 
     /**
