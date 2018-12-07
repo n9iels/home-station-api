@@ -33,15 +33,9 @@ export class Atmosphere {
     }
 
     getBetween(from: Date, to: Date, limit: number = 0) {
-        return this.instance.findAll({
-            where: {
-                createdAt: {
-                    [this.sequelize.Op.gte]: from,
-                    [this.sequelize.Op.lte]: to,
-                }
-            },
-            order: [['createdAt']],
-            limit: Number(limit)
-        })
+        return this.sequelize.query(
+            'SELECT * FROM (SELECT * FROM Atmospheres WHERE createdAt > ? AND createdAt < ? ORDER BY createdAt DESC LIMIT ?) T ORDER BY createdAt',
+            { replacements: [from, to, limit], type: this.sequelize.QueryTypes.SELECT }
+        )
     }
 }

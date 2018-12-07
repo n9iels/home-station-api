@@ -29,7 +29,7 @@ export class WeahterApiController {
     public getAtmosphereData(req: Restify.Request, res: Restify.Response, next: Restify.Next) {
         let from = new Date(req.query.from)
         let to = new Date(req.query.to)
-        let amount = req.query.amount
+        let amount = Number(req.query.amount)
 
         if (!from || !to || isNaN(from.getTime()) || isNaN(to.getTime())) {
             res.send(400)
@@ -37,9 +37,9 @@ export class WeahterApiController {
         }
 
         new Atmosphere(this.sequelize)
-            .getBetween(from, to, !amount ? 300 : amount)
+            .getBetween(from, to, !amount || isNaN(amount) ? 300 : amount)
             .then(v => res.send(v))
-            .catch(e => res.send(e))
+            .catch(e => next(e))
     }
 
     /**
