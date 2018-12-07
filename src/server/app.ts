@@ -35,6 +35,7 @@ server.get('/*', Restify.plugins.serveStatic({
   default: 'index.html'
 }));
 server.get('/api/weather/atmosphere', (req, res, next) => weahterApi.getAtmosphereData(req, res, next))
+server.get('/api/weather/atmosphere/latest', (req, res, next) => weahterApi.getLatestAtmosphereData(req, res, next))
 server.post('/api/weather/atmosphere', (req, res, next) => weahterApi.postAtmosphereData(req, res, next))
 server.get('/api/weather/wind', (req, res, next) => weahterApi.getWindData(req, res, next))
 server.post('/api/weather/wind', (req, res, next) => weahterApi.postWindspeedData(req, res, next))

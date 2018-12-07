@@ -5,6 +5,7 @@ import { Api } from "../../types"
 import { DataHelper } from "../helpers/dataHelper"
 import { Atmosphere } from "../models/atmosphere";
 import { Windspeed } from "../models/windspeed";
+import { FORMERR } from "dns";
 
 export class WeahterApiController {
 
@@ -38,6 +39,28 @@ export class WeahterApiController {
 
         new Atmosphere(this.sequelize)
             .getBetween(from, to, !amount || isNaN(amount) ? 300 : amount)
+            .then(v => res.send(v))
+            .catch(e => next(e))
+    }
+
+    /**
+     * GET /api/weather/atmosphere/latest
+     * 
+     * Get the latest weahter data
+     * 
+     * @param req Restify Request object
+     * @param res Restify Response object
+     * @param next Restify Next function
+     */
+    public getLatestAtmosphereData(req: Restify.Request, res: Restify.Response, next: Restify.Next) {
+        let from = new Date()
+        let to = new Date()
+        from.setHours(0, 0, 0)
+        to.setHours(0, 0, 0)
+        to.setDate(to.getDate() + 1)
+
+        new Atmosphere(this.sequelize)
+            .getBetween(from, to, 1)
             .then(v => res.send(v))
             .catch(e => next(e))
     }
