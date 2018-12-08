@@ -21,6 +21,8 @@ class App extends React.Component<AppProps, AppState> {
     componentDidMount() {
         this.getAtmosphereData()
         this.getWindspeedData()
+
+        setInterval(() => this.getAtmosphereData(), 10000)
     }
 
     getAtmosphereData() {
